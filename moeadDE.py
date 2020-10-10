@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 # @author: lishaogang
-# @file: moea_d.py
-# @time: 2020/9/22 0022 17:43
+# @file:
+# @time: 2020/10/10 0022 17:43
 # @desc:MOEA/D算法实现
 import math
 
@@ -24,8 +24,8 @@ EPS = 1.2e-7
 problems = [DTLZ1,DTLZ2,DTLZ3,DTLZ4,DTLZ5,DTLZ6,DTLZ7]
 problem_id = 0
 
-class MOEAD():
-    def __init__(self,pf=None, problem=DTLZ1):
+class MOEADDE():
+    def __init__(self, problem=DTLZ1):
         # 每次最大迭代的次数
         self.max_generation = 100
         # 每次最大计算fitness次数
@@ -44,12 +44,14 @@ class MOEAD():
         self.lbound = self.problem.xl
         self.rbound = self.problem.xu
 
+        # 变异过程中用到的参数
+        self.realb = 0.5 #从邻居还是全体成员之中选择交叉项的阈值
+        self.mating_size = 2 #交叉杂交的个体数量
+        self.rate = 0.5 #更新速度
+        self.limit = 2  # 最多被替代更新的次数
+
         # 问题的种群
-        self.pf = pf
-        if pf is None:
-            self.vector_size = 18  # 权重向量大小 双目标23，三目标99
-        else:
-            self.vector_size = len(pf)
+        self.vector_size = 18  # 权重向量大小 双目标23，三目标99
         self.pop = []   # 种群个体
 
         # ideal point 理想点
@@ -70,18 +72,18 @@ class MOEAD():
         # print('hyper volume is ', hv.compute(self.pop))
 
         # 进化更新
-        # for gene in range(self.max_generation):
         gene = 1
         while self.count_fitness < self.max_count_fitness: #and gene < self.max_generation:
             # print('第{}代开始'.format(gene))
+            perm = [i for i in range(self.vector_size)]
+            random.shuffle(perm)
             for i in range(self.vector_size):
-                child, _ = self.reproduction(i)
-                child = self.improvememt(child)
+                mating_pops, type = self.mating_selection(perm[i])
+                child = self.diff_evo_xover2(i, mating_pops[0], mating_pops[1])
                 # update reference
                 fit = self.update_reference(child)
                 #update of neighborhoods,由于当前i是i最近的元素，距离为0，故也在下面函数中更新
-                self.update_problem(child, fit, i)
-            # print('hyper volume is ', hv.compute(self.pop))
+                self.update_problem(child, fit, perm[i], type)
             gene += 1
         print('结束')
 
@@ -90,34 +92,25 @@ class MOEAD():
         初始化权重限量
         :return:
         '''
-        if self.pf is None:
-            for i in range(self.vector_size):
-                if self.n_obj == 2:
-                    pop = ind()
-                    pop.vector.append(i)
-                    pop.vector.append(self.vector_size-i)
-                    for j in range(len(self.n_obj)):
-                        pop.namda.append(1.0*pop.vector[j]/self.vector_size)
-                    self.pop.append(pop)
-                elif self.n_obj == 3:
-                    for j in range(self.vector_size):
-                        if i+j <= self.vector_size:
-                            pop = ind()
-                            pop.vector.append(i)
-                            pop.vector.append(j)
-                            pop.vector.append(self.vector_size-i-j)
-                            for k in range(self.n_obj):
-                                pop.namda.append(1.0*pop.vector[k]/self.vector_size)
-                            self.pop.append(pop)
-            self.vector_size = len(self.pop)
-        else:
-            for i in range(len(self.pf)):
+        for i in range(self.vector_size):
+            if self.n_obj == 2:
                 pop = ind()
-                pop.vector = self.pf[i]
-                for k in range(self.n_obj):
-                    pop.namda.append(1.0 * pop.vector[k] / self.vector_size)
+                pop.vector.append(i)
+                pop.vector.append(self.vector_size-i)
+                for j in range(len(self.n_obj)):
+                    pop.namda.append(1.0*pop.vector[j]/self.vector_size)
                 self.pop.append(pop)
-        # print(self.vector_size)
+            elif self.n_obj == 3:
+                for j in range(self.vector_size):
+                    if i+j <= self.vector_size:
+                        pop = ind()
+                        pop.vector.append(i)
+                        pop.vector.append(j)
+                        pop.vector.append(self.vector_size-i-j)
+                        for k in range(self.n_obj):
+                            pop.namda.append(1.0*pop.vector[k]/self.vector_size)
+                        self.pop.append(pop)
+        self.vector_size = len(self.pop)
 
     def init_neighbor(self):
         distances = []
@@ -146,6 +139,46 @@ class MOEAD():
                 if self.pop[i].pop_fitness[j] < self.ideal_fitness[j]:
                     self.ideal_fitness[j] = self.pop[i].pop_fitness[j]
                     self.ideal_point[j] = copy.copy(self.pop[i].pop_x)
+
+    def mating_selection(self, pop_id):
+        '''
+        取得杂交变异过程的父辈
+        :param pop_id:
+        :return:
+        '''
+        rnd = random.random()
+        type = 1
+        if rnd < self.realb:
+            mating_pops = []
+            mating_pops_id = random.sample(self.pop[pop_id].neighbor, self.mating_size)
+            for id in mating_pops_id:
+                mating_pops.append(self.pop[id])
+        else:
+            mating_pops = random.sample(self.pop, self.mating_size)
+            type = 2
+        return mating_pops, type
+
+    def diff_evo_xover2(self, pop_id, p1, p2):
+        '''
+        使用差分进化中杂交的算子来产生下一代
+        :param pop_id:
+        :param p1:
+        :param p2:
+        :return:
+        '''
+        child = []
+        for i in range(self.n_var):
+            x = self.pop[pop_id].pop_x[i] + self.rate * (p2.pop_x[i]-p1.pop_x[i])
+            if x < self.lbound[i]:
+                x = self.lbound[i] + random.random() * (self.lbound[i]-x)
+                # x = self.lbound
+            if x > self.rbound[i]:
+                # x = self.rbound
+                x = self.rbound[i] + random.random() * (self.rbound[i]-x)
+            child.append(x)
+        return child
+
+
 
     def reproduction(self, pop_id):
         '''
@@ -258,14 +291,27 @@ class MOEAD():
                 self.ideal_point[i] = child
         return p
 
-    def update_problem(self,child, fit, id):
-        for i in range(self.max_neighborhood_size):
-            k = self.pop[id].neighbor[i]
+    def update_problem(self,child, fit, id, type):
+        if type == 1:
+            size = self.max_neighborhood_size
+        else:
+            size = self.vector_size
+        perm = [i for i in range(size)]
+        random.shuffle(perm)
+        time = 0
+        for i in range(size):
+            if type == 1:
+                k = self.pop[id].neighbor[perm[i]]
+            else:
+                k = perm[i]
             f1 = self.scalar_func(self.pop[k].pop_fitness, self.pop[k].namda)
             f2 = self.scalar_func(fit, self.pop[k].namda)
             if f2 < f1:
                 self.pop[k].pop_x = child
                 self.pop[k].pop_fitness = fit
+                time +=1
+            if time > self.limit:
+                break
 
     def scalar_func(self, y_obj, namda):
         '''
@@ -301,7 +347,7 @@ def problem_test(problem):
     :param problem:
     :return:
     '''
-    model = MOEAD(problem=problem)
+    model = MOEADDE(problem=problem)
     model.run()
     pops, x, y, z = extract_info(model)
     pf = get_pflist('./pf_files/n10000/{}.txt'.format(model.problem.name()))
@@ -312,7 +358,6 @@ def problem_test(problem):
     print('hyper volume is {}'.format(hv_score))
     print('inverted generational distance is {}'.format(igd))
     draw_scatter3D(model.problem.name(), hv_score, igd, reference_point, x, y, z)
-
 
 def draw_scatter3D(pname, hv_score, igd, reference_point, x, y, z):
     '''
@@ -336,7 +381,6 @@ def draw_scatter3D(pname, hv_score, igd, reference_point, x, y, z):
     ax.set_title(title)
     plt.show()
 
-
 def extract_info(model):
     '''
     从model运行结果中拿出后面要用的信息
@@ -355,6 +399,5 @@ def extract_info(model):
         z.append(zz)
     return pops, x, y, z
 
-
 if __name__ == '__main__':
-    problem_test(DTLZ7)
+    problem_test(DTLZ3)
