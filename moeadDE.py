@@ -48,7 +48,7 @@ class MOEADDE():
         self.realb = 0.5 #从邻居还是全体成员之中选择交叉项的阈值
         self.mating_size = 2 #交叉杂交的个体数量
         self.rate = 0.5 #更新速度
-        self.limit = 2  # 最多被替代更新的次数
+        self.limit = 5  # 最多被替代更新的次数
 
         # 问题的种群
         self.vector_size = 18  # 权重向量大小 双目标23，三目标99
@@ -76,7 +76,7 @@ class MOEADDE():
         while self.count_fitness < self.max_count_fitness: #and gene < self.max_generation:
             # print('第{}代开始'.format(gene))
             perm = [i for i in range(self.vector_size)]
-            random.shuffle(perm)
+            # random.shuffle(perm)
             for i in range(self.vector_size):
                 mating_pops, type = self.mating_selection(perm[i])
                 child = self.diff_evo_xover2(i, mating_pops[0], mating_pops[1])
@@ -297,7 +297,7 @@ class MOEADDE():
         else:
             size = self.vector_size
         perm = [i for i in range(size)]
-        random.shuffle(perm)
+        # random.shuffle(perm)
         time = 0
         for i in range(size):
             if type == 1:
@@ -400,4 +400,4 @@ def extract_info(model):
     return pops, x, y, z
 
 if __name__ == '__main__':
-    problem_test(DTLZ3)
+    problem_test(DTLZ1)
