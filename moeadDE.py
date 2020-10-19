@@ -6,7 +6,7 @@
 # @desc:MOEA/D算法实现
 import math
 
-from pymop.problems.dtlz import DTLZ1, DTLZ2, DTLZ3, DTLZ4, DTLZ5, DTLZ6, DTLZ7
+from utils.benchmarks import DTLZ1, DTLZ2, DTLZ3, DTLZ4, DTLZ5, DTLZ6, DTLZ7
 import numpy as np
 import copy
 import random
@@ -177,8 +177,6 @@ class MOEADDE():
                 x = self.rbound[i] + random.random() * (self.rbound[i]-x)
             child.append(x)
         return child
-
-
 
     def reproduction(self, pop_id):
         '''
