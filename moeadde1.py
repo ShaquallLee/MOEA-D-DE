@@ -42,13 +42,14 @@ class MOEADDE():
         self.rbound = self.problem.xu
 
         # 变异过程中用到的参数
-        self.realb = 0.5 #从邻居还是全体成员之中选择交叉项的阈值
+        self.realb = 0.9 #从邻居还是全体成员之中选择交叉项的阈值
         self.mating_size = 2 #交叉杂交的个体数量
         self.rate = 0.5 #更新速度
-        self.limit = 5  # 最多被替代更新的次数
+        self.limit = 2#5  # 最多被替代更新的次数
 
         # 问题的种群
-        self.pop_size = 18  # 权重向量大小 双目标23，三目标99
+        self.pop_size = 300  # 种群大小
+        self.unit = 33 # 3目标的时候用这个方式
         self.pop = []   # 种群个体
 
         # ideal point 理想点
@@ -84,25 +85,26 @@ class MOEADDE():
         初始化
         :return:
         '''
-        for i in range(self.pop_size):
-            if self.n_obj == 2:
+
+        if self.n_obj == 2:
+            for i in range(self.pop_size):
                 pop = ind()
-                pop.vector.append(i)
-                pop.vector.append(self.pop_size-i)
-                for j in range(len(self.n_obj)):
-                    pop.namda.append(1.0*pop.vector[j]/self.pop_size)
+                a = (1.0*i)/(self.pop_size-1)
+                pop.namda.append(a)
+                pop.namda.append(1-a)
                 self.pop.append(pop)
-            elif self.n_obj == 3:
-                for j in range(self.pop_size):
-                    if i+j <= self.pop_size:
+        elif self.n_obj == 3:
+            for i in range(self.unit):
+                for j in range(self.unit):
+                    if i+j <= self.unit:
                         pop = ind()
                         pop.vector.append(i)
                         pop.vector.append(j)
-                        pop.vector.append(self.pop_size-i-j)
+                        pop.vector.append(self.unit-i-j)
                         for k in range(self.n_obj):
-                            pop.namda.append(1.0*pop.vector[k]/self.pop_size)
+                            pop.namda.append((1.0*pop.vector[k])/self.unit)
                         self.pop.append(pop)
-        self.pop_size = len(self.pop)
+            self.pop_size = len(self.pop)
 
     def init_neighbourhood(self):
         '''
@@ -190,7 +192,7 @@ class MOEADDE():
             if xi<self.lbound[i]:
                 xi = self.lbound[i] + random.random()*(xi-self.lbound[i])
             if xi>self.rbound[i]:
-                xi = self.rbound[i] - random.random()*(self.rbound[i]-xi)
+                xi = self.rbound[i] + random.random()*(self.rbound[i]-xi)
             child[i] = xi
         return child
 
@@ -206,11 +208,16 @@ class MOEADDE():
                 if rnd <=0.5:
                     xy = 1.0-delta1
                     val = 2.0*rnd+(1.0-2.0*rnd)*(pow(xy, (etam+1.0)))
+                    print("rnd={},xy={}".format(rnd, xy))
                     deltaq = pow(val, mut_pow)-1.0
+                    # print("val={}, pow={}".format(val, mut_pow))
                 else:
                     xy = 1.0-delta2
                     val = 2.0*(1.0-rnd)+2.0*(rnd-0.5)*(pow(xy, (etam+1.0)))
+                    if val == float('inf')/float('inf'):
+                        print("xy={},rnd={}".format(xy, rnd))
                     deltaq = 1.0-pow(val,mut_pow)
+                    # print("val={}, pow={}".format(val, mut_pow))
                 y = y + deltaq*(self.rbound[j]-self.lbound[j])
                 if y < self.lbound[j]:
                     y = self.lbound[j]
@@ -243,6 +250,7 @@ class MOEADDE():
             f2 = fitness_function(fit, self.pop[k].namda, self.ideal_fitness)
             if f2 < f1:
                 self.pop[k].pop_x = child
+                self.pop[k].pop_fitness = fit
                 t += 1
             if t > self.limit:
                 return 0
