@@ -282,6 +282,7 @@ def problem_test(problem):
     plt.plot(distances[1:])
     plt.xlabel("generation")
     plt.ylabel("IGD")
+    plt.savefig('./results/{}.png'.format(model.problem.name()))
     plt.show()
 
 if __name__ == '__main__':
