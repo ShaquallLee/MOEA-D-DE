@@ -6,25 +6,17 @@
 # @desc:
 import math
 
-from utils.benchmarks import *
 import numpy as np
 import copy
 import random
 from individual import Individual as ind
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from utils.hypervolume import HyperVolume
 from utils.pfget import get_pflist
 from utils.igd import get_igd
-from utils.referencePoint import get_referencepoint
-from utils.common import get_random_list,fitness_function, extract_info,draw_scatter3D
+from utils.common import get_random_list,fitness_function
 
-problems = [DTLZ1,DTLZ2,DTLZ3,DTLZ4,DTLZ5,DTLZ6,DTLZ7]
-
-max_run = 10
 
 class MOEADDE():
-    def __init__(self, problem=DTLZ1):
+    def __init__(self, problem):
         # 每次最大迭代的次数
         self.max_generation = 500
         # 每次最大计算fitness次数
@@ -258,32 +250,3 @@ class MOEADDE():
             if t > self.limit:
                 return 0
 
-def problems_test():
-    '''
-    一系列函数的测试
-    :return:
-    '''
-    for id in range(len(problems)):
-        print('DTLZ{} starting……'.format(id))
-        problem_test(problem=problems[id])
-
-def problem_test(problem):
-    model = MOEADDE(problem)
-    distances = model.execute()
-    pops, x, y, z = extract_info(model)
-    reference_point = get_referencepoint(pops)
-    hv = HyperVolume(reference_point=reference_point)
-    hv_score = hv.compute(model.pop)
-    igd = get_igd(model.pareto_front, pops)  # 计算反世代距离IGD
-    print('hyper volume is {}'.format(hv_score))
-    print('inverted generational distance is {}'.format(igd))
-    draw_scatter3D(model.problem.name(), hv_score, igd, reference_point, x, y, z)
-    plt.figure()
-    plt.plot(distances[1:])
-    plt.xlabel("generation")
-    plt.ylabel("IGD")
-    plt.savefig('./results/{}.png'.format(model.problem.name()))
-    plt.show()
-
-if __name__ == '__main__':
-    problems_test()
