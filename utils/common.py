@@ -6,6 +6,7 @@
 # @desc:
 import random
 import math
+import matplotlib.pyplot as plt
 
 def get_random_list(size):
     '''
@@ -37,3 +38,43 @@ def fitness_function(y, namda, idealpoint):
     fitness = max_fun
 
     return fitness
+
+def extract_info(model):
+    '''
+    从model运行结果中拿出后面要用的信息
+    :param model:
+    :return:
+    '''
+    x = []
+    y = []
+    z = []
+    pops = []
+    for p in model.pop:
+        xx, yy, zz = p.pop_fitness
+        pops.append(p.pop_fitness)
+        x.append(xx)
+        y.append(yy)
+        z.append(zz)
+    return pops, x, y, z
+
+def draw_scatter3D(pname, hv_score, igd, reference_point, x, y, z):
+    '''
+    画3D散点图
+    :param hv_score:
+    :param igd:
+    :param x:
+    :param y:
+    :param z:
+    :return:
+    '''
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(x, y, z)
+    x_r, y_r, z_r = reference_point
+    ax.scatter(x_r, y_r, z_r, c='r')
+    ax.set_xlabel('func1')
+    ax.set_ylabel('func2')
+    ax.set_zlabel('func3')
+    title = '{} pareto front\nHV:{}\nIGD:{}'.format(pname, hv_score, igd)
+    ax.set_title(title)
+    plt.show()
