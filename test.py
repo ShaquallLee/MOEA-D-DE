@@ -3,12 +3,13 @@
 # @author: lishaogang
 # @file: test.py
 # @time: 2020/10/20 0020 18:59
-# @desc:
+# @desc: 实验测试MODE/D-DE算法及其改进
 from utils.benchmarks import *
 from moeadde1 import MOEADDE
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+from utils.fileProcess import savePareto2Txt, readPareto4Txt
 from utils.igd import get_igd
 from utils.referencePoint import get_referencepoint
 from utils.common import extract_info,draw_scatter3D
