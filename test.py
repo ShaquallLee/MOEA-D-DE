@@ -17,7 +17,7 @@ from utils.hypervolume import HyperVolume
 problems = [DTLZ1,DTLZ2,DTLZ3,DTLZ4,DTLZ5,DTLZ6,DTLZ7]
 max_run = 10
 
-def problems_test(draw):
+def problems_test(draw, r2f=False):
     '''
     一系列函数问题的测试
     :return:
@@ -27,7 +27,7 @@ def problems_test(draw):
         # problem_test(problem=problems[id], draw=False)
         n_run(10, problems[id], draw=draw)
 
-def problem_test(problem, draw=True):
+def problem_test(problem, draw=True, s2f=False):
     '''
     单个问题测试
     :param problem:
@@ -51,10 +51,12 @@ def problem_test(problem, draw=True):
         plt.ylabel("IGD")
         plt.savefig('./results/{}.png'.format(model.problem.name()))
         plt.show()
+    if s2f:
+        savePareto2Txt(model.problem.name(), pops)
     return hv, igd
 
 
-def n_run(n, problem, draw):
+def n_run(n, problem, draw, s2f=False):
     '''
     运行n次
     :param n:
@@ -64,7 +66,7 @@ def n_run(n, problem, draw):
     igds = []
     hvs = []
     for i in range(n):
-        hv, igd = problem_test(problem, draw)
+        hv, igd = problem_test(problem, draw, s2f=s2f)
         hvs.append(hv)
         igds.append(igd)
     print("avgIGD={},minIGD={}\navgHV={},minHV={}".format(
@@ -72,5 +74,5 @@ def n_run(n, problem, draw):
     ))
 
 if __name__ == '__main__':
-    problems_test(draw=False)
+    problems_test(draw=False, s2f=False)
 
