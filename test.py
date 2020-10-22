@@ -19,15 +19,21 @@ max_run = 10
 
 def problems_test(draw):
     '''
-    一系列函数的测试
+    一系列函数问题的测试
     :return:
     '''
     for id in range(len(problems)):
         print('DTLZ{} starting……'.format(id))
         # problem_test(problem=problems[id], draw=False)
-        n_run(10, problems[id], draw=False)
+        n_run(10, problems[id], draw=draw)
 
 def problem_test(problem, draw=True):
+    '''
+    单个问题测试
+    :param problem:
+    :param draw:
+    :return:
+    '''
     model = MOEADDE(problem)
     distances = model.execute()
     pops, x, y, z = extract_info(model)
