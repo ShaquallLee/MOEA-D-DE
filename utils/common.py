@@ -77,4 +77,5 @@ def draw_scatter3D(pname, hv_score, igd, reference_point, x, y, z):
     ax.set_zlabel('func3')
     title = '{} pareto front\nHV:{}\nIGD:{}'.format(pname, hv_score, igd)
     ax.set_title(title)
+    plt.savefig('./results/{}_s.png'.format(pname))
     plt.show()

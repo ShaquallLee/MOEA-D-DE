@@ -23,10 +23,15 @@ def problems_test(draw, r2f=False):
     一系列函数问题的测试
     :return:
     '''
+    igdss = []
+    hvss = []
     for id in range(len(problems)):
         print('DTLZ{} starting……'.format(id))
         # problem_test(problem=problems[id], draw=False)
-        n_run(10, problems[id], draw=draw)
+        igds, hvs = n_run(10, problems[id], draw=draw)
+        igdss.append(igds)
+        hvss.append(hvs)
+    return igdss, hvss
 
 def problem_test(problem, draw=True, s2f=False):
     '''
@@ -73,7 +78,10 @@ def n_run(n, problem, draw, s2f=False):
     print("avgIGD={},minIGD={}\navgHV={},minHV={}".format(
         sum(igds)/n, min(igds), sum(igds)/n, min(igds)
     ))
+    return igds, hvs
 
 if __name__ == '__main__':
-    problems_test(draw=False, s2f=False)
+    # igdss, hvss = problems_test(False, r2f=True)
+    # problem_test(DTLZ1,s2f=True)
+    n_run(10, DTLZ7, True, s2f=True)
 
