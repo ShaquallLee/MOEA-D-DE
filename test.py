@@ -12,7 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from utils.fileProcess import savePareto2Txt, readPareto4Txt
 from utils.igd import get_igd
 from utils.referencePoint import get_referencepoint
-from utils.common import extract_info,draw_scatter3D
+from utils.common import extract_info,draw_scatter3D, draw_igd
 from utils.hypervolume import HyperVolume
 
 problems = [DTLZ1,DTLZ2,DTLZ3,DTLZ4,DTLZ5,DTLZ6,DTLZ7]
@@ -51,12 +51,7 @@ def problem_test(problem, draw=True, s2f=False):
     print('inverted generational distance is {}'.format(igd))
     if draw:
         draw_scatter3D(model.problem.name(), hv_score, igd, reference_point, x, y, z)
-        plt.figure()
-        plt.plot(distances[1:])
-        plt.xlabel("generation")
-        plt.ylabel("IGD")
-        plt.savefig('./results/{}.png'.format(model.problem.name()))
-        plt.show()
+        draw_igd(distances, model)
     if s2f:
         savePareto2Txt(model.problem.name(), pops)
     return hv, igd
