@@ -5,6 +5,23 @@
 # @time: 2020/10/22 0022 17:03
 # @desc:
 
+from xlwt import *
+
+def saveArray2Excel(name, data):
+    '''
+    保存数据到excel文件中
+    :param name:
+    :param data:
+    :return:
+    '''
+    f = Workbook(encoding='utf-8')
+    table = f.add_sheet('sheet1')
+    for i in range(len(name)):
+        for j in range(len(name[i])):
+            table.write(j, i, data[i][j])
+    f.save(name)
+    print("保存数据到{}文件成功".format(name))
+
 def savePareto2Txt(name,pareto):
     '''
     保存Pareto前沿到txt文件中

@@ -9,7 +9,7 @@ from moeadde1 import MOEADDE
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-from utils.fileProcess import savePareto2Txt, readPareto4Txt
+from utils.fileProcess import savePareto2Txt, readPareto4Txt, saveArray2Excel
 from utils.igd import get_igd
 from utils.referencePoint import get_referencepoint
 from utils.common import extract_info,draw_scatter3D, draw_igd
@@ -73,10 +73,12 @@ def n_run(n, problem, draw, s2f=False):
     print("avgIGD={},minIGD={}\navgHV={},minHV={}".format(
         sum(igds)/n, min(igds), sum(igds)/n, min(igds)
     ))
-    return igds, hvs
+    return igds, hvs, problem.name()
 
 if __name__ == '__main__':
     # igdss, hvss = problems_test(False, r2f=True)
     # problem_test(DTLZ1,s2f=True)
-    n_run(10, DTLZ7, True, s2f=True)
+    igds, hvs, name = n_run(10, DTLZ7, True, s2f=True)
+    data = [igds, hvs]
+    saveArray2Excel("./results/excels/name.els", data)
 
