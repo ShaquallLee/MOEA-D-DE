@@ -15,8 +15,9 @@ def savePareto2Txt(name,pareto):
     with open('./results/{}_res.txt'.format(name), 'w+', encoding='utf-8') as f:
         for items in pareto:
             if items!=[]:
-                f.write('\t'.join(items)+'\n')
+                f.write('\t'.join(list(map(str, list(items))))+'\n')
             else:
+                print('EORRO:88888888')
                 print(pareto)
     print('保存至‘./results/{}_res.txt’成功'.format(name))
 
@@ -30,7 +31,7 @@ def readPareto4Txt(name):
     with open('./results/{}.txt'.format(name),'r', encoding='utf-8') as f:
         lines = f.readlines()
         for line in lines:
-            pareto.append(line.strip().split('\t'))
+            pareto.append(list(map(float, line.strip().split('\t'))))
     print("读取‘./results/{}_res.txt'成功".format(name))
     return pareto
 
