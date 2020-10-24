@@ -6,6 +6,7 @@
 # @desc:
 
 from xlwt import *
+import time
 
 def saveArray2Excel(name, data):
     '''
@@ -16,9 +17,13 @@ def saveArray2Excel(name, data):
     '''
     f = Workbook(encoding='utf-8')
     table = f.add_sheet('sheet1')
+    for i in range(len(name[0])):
+        table.write(0, i+1, "第{}次".format(i))
+    table.write(1,0, "IGD")
+    table.write(2,0, "HV")
     for i in range(len(name)):
         for j in range(len(name[i])):
-            table.write(j, i, data[i][j])
+            table.write(i+1,j+1, data[i][j])
     f.save(name)
     print("保存数据到{}文件成功".format(name))
 
@@ -29,14 +34,15 @@ def savePareto2Txt(name,pareto):
     :param pareto:
     :return:
     '''
-    with open('./results/{}_res.txt'.format(name), 'w+', encoding='utf-8') as f:
+    tname = './results/{}_res_{}.txt'.format(name, time.time())
+    with open(tname, 'w+', encoding='utf-8') as f:
         for items in pareto:
             if items!=[]:
                 f.write('\t'.join(list(map(str, list(items))))+'\n')
             else:
                 print('EORRO:88888888')
                 print(pareto)
-    print('保存至‘./results/{}_res.txt’成功'.format(name))
+    print("保存至‘{}'成功".format(tname))
 
 def readPareto4Txt(name):
     '''

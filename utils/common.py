@@ -6,6 +6,7 @@
 # @desc:
 import random
 import math
+import time
 import matplotlib.pyplot as plt
 
 def get_random_list(size):
@@ -77,7 +78,7 @@ def draw_scatter3D(pname, hv_score, igd, reference_point, x, y, z):
     ax.set_zlabel('func3')
     title = '{} pareto front\nHV:{}\nIGD:{}'.format(pname, hv_score, igd)
     ax.set_title(title)
-    plt.savefig('./results/{}_s.png'.format(pname))
+    plt.savefig('./results/{}_s_{}.png'.format(pname, time.time()))
     plt.show()
 
 def draw_igd(distances, model):
@@ -91,6 +92,6 @@ def draw_igd(distances, model):
     plt.plot(distances[1:])
     plt.xlabel("generation")
     plt.ylabel("IGD")
-    plt.savefig('./results/photos/{}.png'.format(model.problem.name()))
+    plt.savefig('./results/photos/{}_{}.png'.format(model.problem.name(), time.time()))
     plt.show()
 
