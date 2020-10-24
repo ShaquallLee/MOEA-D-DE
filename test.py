@@ -75,12 +75,12 @@ def n_run(n, problem, draw, s2f=False):
     print("avgIGD={},minIGD={}\navgHV={},minHV={}".format(
         sum(igds)/n, min(igds), sum(igds)/n, min(igds)
     ))
-    return igds, hvs, problem.name()
+    return igds, hvs
 
 if __name__ == '__main__':
     # igdss, hvss = problems_test(False, r2f=True)
     # problem_test(DTLZ1,s2f=True)
-    igds, hvs, name = n_run(10, problems[pid], True, s2f=True)
+    igds, hvs = n_run(4, problems[pid], True, s2f=True)
     data = [igds, hvs]
-    saveArray2Excel("./results/excels/{}.els".format(names[pid]), data)
+    saveArray2Excel("./results/excels/{}.xls".format(names[pid]), data)
 

@@ -78,7 +78,7 @@ def draw_scatter3D(pname, hv_score, igd, reference_point, x, y, z):
     ax.set_zlabel('func3')
     title = '{} pareto front\nHV:{}\nIGD:{}'.format(pname, hv_score, igd)
     ax.set_title(title)
-    plt.savefig('./results/{}_s_{}.png'.format(pname, time.time()))
+    plt.savefig('./results/photos/p/{}_s_{}.png'.format(pname, time.time()))
     plt.show()
 
 def draw_igd(distances, model):
@@ -92,6 +92,6 @@ def draw_igd(distances, model):
     plt.plot(distances[1:])
     plt.xlabel("generation")
     plt.ylabel("IGD")
-    plt.savefig('./results/photos/{}_{}.png'.format(model.problem.name(), time.time()))
+    plt.savefig('./results/photos/p/{}_{}.png'.format(model.problem.name(), time.time()))
     plt.show()
 
