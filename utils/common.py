@@ -92,6 +92,6 @@ def draw_igd(distances, model):
     plt.plot(distances[1:])
     plt.xlabel("generation")
     plt.ylabel("IGD")
-    plt.savefig('./results/photos/p/{}_{}.png'.format(model.problem.name(), time.time()))
+    plt.savefig('./results/photos/igd/{}_{}.png'.format(model.problem.name(), time.time()))
     plt.show()
 

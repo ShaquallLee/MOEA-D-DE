@@ -56,7 +56,7 @@ def problem_test(problem, draw=True, s2f=False):
         draw_igd(distances, model)
     if s2f:
         savePareto2Txt(model.problem.name(), pops)
-    return hv, igd
+    return hv_score, igd
 
 
 def n_run(n, problem, draw, s2f=False):
@@ -80,7 +80,7 @@ def n_run(n, problem, draw, s2f=False):
 if __name__ == '__main__':
     # igdss, hvss = problems_test(False, r2f=True)
     # problem_test(DTLZ1,s2f=True)
-    igds, hvs = n_run(4, problems[pid], True, s2f=True)
+    igds, hvs = n_run(2, problems[pid], True, s2f=True)
     data = [igds, hvs]
     saveArray2Excel("./results/excels/{}.xls".format(names[pid]), data)
 
