@@ -17,7 +17,7 @@ def saveArray2Excel(name, data):
     '''
     f = Workbook(encoding='utf-8')
     table = f.add_sheet('sheet1')
-    for i in range(len(table[0])):
+    for i in range(len(data[0])):
         table.write(0, i+1, "第{}次".format(i+1))
     table.write(1,0, "IGD")
     table.write(2,0, "HV")
