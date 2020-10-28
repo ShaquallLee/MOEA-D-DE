@@ -9,7 +9,7 @@ from moeadde1 import MOEADDE
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-from utils.fileProcess import savePareto2Txt, readPareto4Txt, saveArray2Excel
+from utils.fileProcess import savePareto2Txt, readPareto4Txt, saveArray2Excel, saveRes2Excel
 from utils.igd import get_igd
 from utils.referencePoint import get_referencepoint
 from utils.common import extract_info,draw_scatter3D, draw_igd
@@ -25,21 +25,20 @@ def problems_test(draw, r2f=False):
     一系列函数问题的测试
     :return:
     '''
-    igdss = []
-    hvss = []
+    results = {}
     for id in range(len(problems)):
         print('DTLZ{} starting……'.format(id))
         # problem_test(problem=problems[id], draw=False)
-        igds, hvs = n_run(10, problems[id], draw=draw)
-        igdss.append(igds)
-        hvss.append(hvs)
-    return igdss, hvss
+        igds, hvs = n_run(10, problems[id], draw=draw, r2f=r2f)
+        results[names[id]] = [igds, hvs]
+    return results
 
 def problem_test(problem, draw=True, s2f=False):
     '''
     单个问题测试
     :param problem:
-    :param draw:
+    :param draw:时候画图
+    :param s2f:是否保存帕累托前沿到文件中
     :return:
     '''
     model = MOEADDE(problem)
@@ -80,6 +79,6 @@ def n_run(n, problem, draw, s2f=False):
 if __name__ == '__main__':
     # igdss, hvss = problems_test(False, r2f=True)
     # problem_test(DTLZ1,s2f=True)
-    igds, hvs = n_run(10, problems[pid], True, s2f=True)
-    data = [igds, hvs]
-    saveArray2Excel("./results/excels/{}.xls".format(names[pid]), data)
+    # igds, hvs = n_run(10, problems[pid], True, s2f=True)
+    res = problems_test(False, r2f=False)
+    saveRes2Excel("./results/excels/{}.xls".format(names[pid]), res)

@@ -19,13 +19,45 @@ def saveArray2Excel(name, data):
     table = f.add_sheet('sheet1')
     for i in range(len(data[0])):
         table.write(0, i+1, "第{}次".format(i+1))
+    table.write(0, len(data[0])+1, '均值')
+    table.write(0, len(data[0])+2, '最小值')
+    table.write(0, len(data[0])+3, '最大值')
     table.write(1,0, "IGD")
     table.write(2,0, "HV")
     for i in range(len(data)):
         for j in range(len(data[i])):
             table.write(i+1,j+1, data[i][j])
+        table.write(i+1,len(data[i])+1, sum(data[i])/len(data[i]))
+        table.write(i+1,len(data[i])+2, min(data[i]))
+        table.write(i+1,len(data[i])+3, max(data[i]))
     f.save(name)
     print("保存数据到{}文件成功".format(name))
+
+def saveRes2Excel(fname, res):
+    '''
+    保存数据到excel文件中
+    :param name:
+    :param data:
+    :return:
+    '''
+    f = Workbook(encoding='utf-8')
+    for name, data in res.items():
+        table = f.add_sheet(name)
+        for i in range(len(data[0])):
+            table.write(0, i+1, "第{}次".format(i+1))
+        table.write(0, len(data[0])+1, '均值')
+        table.write(0, len(data[0])+2, '最小值')
+        table.write(0, len(data[0])+3, '最大值')
+        table.write(1,0, "IGD")
+        table.write(2,0, "HV")
+        for i in range(len(data)):
+            for j in range(len(data[i])):
+                table.write(i+1,j+1, data[i][j])
+            table.write(i+1,len(data[i])+1, sum(data[i])/len(data[i]))
+            table.write(i+1,len(data[i])+2, min(data[i]))
+            table.write(i+1,len(data[i])+3, max(data[i]))
+    f.save(fname)
+    print("保存数据到{}文件成功".format(fname))
 
 def savePareto2Txt(name,pareto):
     '''
