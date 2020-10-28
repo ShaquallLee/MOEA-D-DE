@@ -20,7 +20,7 @@ names = ['dtlz1','dtlz2','dtlz3','dtlz4','dtlz5','dtlz6','dtlz7']
 max_run = 10
 pid = 3
 
-def problems_test(draw, r2f=False):
+def problems_test(nrun, draw, r2f=False):
     '''
     一系列函数问题的测试
     :return:
@@ -29,7 +29,7 @@ def problems_test(draw, r2f=False):
     for id in range(len(problems)):
         print('DTLZ{} starting……'.format(id))
         # problem_test(problem=problems[id], draw=False)
-        igds, hvs = n_run(10, problems[id], draw=draw, r2f=r2f)
+        igds, hvs = n_run(nrun, problems[id], draw=draw, r2f=r2f)
         results[names[id]] = [igds, hvs]
     return results
 
@@ -80,5 +80,5 @@ if __name__ == '__main__':
     # igdss, hvss = problems_test(False, r2f=True)
     # problem_test(DTLZ1,s2f=True)
     # igds, hvs = n_run(10, problems[pid], True, s2f=True)
-    res = problems_test(False, r2f=False)
+    res = problems_test(10, False, r2f=False)
     saveRes2Excel("./results/excels/{}.xls".format(names[pid]), res)
