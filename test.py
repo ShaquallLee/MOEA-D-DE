@@ -27,7 +27,7 @@ def problems_test(nrun, draw, r2f=False):
     '''
     results = {}
     for id in range(len(problems)):
-        print('DTLZ{} starting……'.format(id))
+        print('DTLZ{} starting……'.format(id+1))
         # problem_test(problem=problems[id], draw=False)
         igds, hvs = n_run(nrun, problems[id], draw=draw, r2f=r2f)
         results[names[id]] = [igds, hvs]
